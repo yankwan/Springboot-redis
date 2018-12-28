@@ -63,6 +63,18 @@ public class RedisTest {
         log.info(res.toString());
     }
 
+    @Test
+    public void testOpsForValueIcr() {
+        redisTemplate.opsForValue().increment("incrNumber", 4);
+        redisTemplate.opsForValue().increment("incrDouble", 3.1);
+    }
+
+    @Test
+    public void testOpsForList() {
+        redisTemplate.opsForList().leftPushAll("list", "Java", "Python", "C", "JS");
+        List list = redisTemplate.opsForList().range("list", 0, -1);
+        log.info("list: {}", list.size());
+    }
 
 
     @Test
