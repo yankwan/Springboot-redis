@@ -15,7 +15,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -108,6 +111,21 @@ public class RedisTest {
     public void testOneUserCache() {
         User user = userService.getUserById(11L);
         log.info("user name is : {}", user.getName());
+    }
+
+    @Test
+    public void concurrentFetchData() {
+        ExecutorService executorService = Executors.newFixedThreadPool(1000);
+        IntStream.range(0, 30).forEach(i ->
+                    executorService.execute(() -> {
+                        log.info("The thread name is : {}", Thread.currentThread());
+                        redisTemplate.opsForValue().increment("count", 1);
+                    })
+        );
+
+        redisTemplate.opsForValue().set("key1", "value1");
+        String value = (String) redisTemplate.opsForValue().get("key1");
+        log.info("redis result is : {}", value);
     }
 
 
