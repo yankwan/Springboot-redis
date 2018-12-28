@@ -1,6 +1,7 @@
 package com.yanjun.redis.redisdemo;
 
 import com.yanjun.redis.redisdemo.model.User;
+import com.yanjun.redis.redisdemo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,9 @@ public class RedisTest {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    public StringRedisTemplate stringRedisTemplate;
+    private UserService userService;
+
+
 
     @Test
     public void testOpsForValue() {
@@ -92,5 +95,20 @@ public class RedisTest {
         redisTemplate.opsForHash().putAll(key, map);
 
     }
+
+    @Test
+    public void testUserAllCache() {
+        List<User> result = userService.getUsers();
+        for (User user : result) {
+            log.info("user name is : {}", user.getName());
+        }
+    }
+
+    @Test
+    public void testOneUserCache() {
+        User user = userService.getUserById(11L);
+        log.info("user name is : {}", user.getName());
+    }
+
 
 }
