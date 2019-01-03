@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -14,11 +15,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 @AutoConfigureAfter(RedisAutoConfiguration.class)
 @Slf4j
 public class RedisConfig extends CachingConfigurerSupport {
+
+    @Autowired
+    private RedisProperties redisProperties;
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory)
@@ -39,5 +45,14 @@ public class RedisConfig extends CachingConfigurerSupport {
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
         template.afterPropertiesSet();
         return template;
+    }
+
+    @Bean
+    public JedisPool jedisPool() {
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxIdle(redisProperties.getJedis().getPool().getMaxIdle());
+        config.setMaxTotal(redisProperties.getJedis().getPool().getMaxActive());
+        config.setMaxWaitMillis(redisProperties.getJedis().getPool().getMaxWait().toMillis());
+        return new JedisPool(config, redisProperties.getHost(), redisProperties.getPort(), 100);
     }
 }

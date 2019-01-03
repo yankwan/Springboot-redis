@@ -63,13 +63,15 @@ public class RedisWithReentrantLock {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Jedis jedis = new Jedis();
         RedisWithReentrantLock redis = new RedisWithReentrantLock(jedis);
         System.out.println(redis.lock("key"));
-        System.out.println(redis.lock("key"));
-        System.out.println(redis.unlock("key"));
-        System.out.println(redis.unlock("key"));
+//        System.out.println(redis.lock("key"));
+//        System.out.println(redis.unlock("key"));
+//        System.out.println(redis.unlock("key"));
+//        System.out.println(redis.unlock("key"));
+        Thread.sleep(6000);
         System.out.println(redis.unlock("key"));
     }
 
