@@ -72,4 +72,4 @@ this.socket.connect(new InetSocketAddress(this.host, this.port), this.connection
 * 使用jedis pool解决并发问题
 
 使用jedis提供的JedisPool连接池处理并发问题。参考`ConcurrentPoolTest`测试用用例。
-需要注意的是，每个线程中必须使用单独的一个jedis实例，如果多个线程共享同个jedis实例仍然会出现并发文天。
+需要注意的是，每个线程中必须使用单独的一个jedis实例，如果多个线程共享同个jedis实例仍然会出现并发问题。

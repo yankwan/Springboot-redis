@@ -37,6 +37,7 @@ public class RedisDelayingQueue<T> {
     public void loop() {
         while (!Thread.interrupted()) {
             // 只取一条
+            // 这里取到0~当前时间，相当于从延迟队列中只取5s前的数据
             Set<String> values = jedis.zrangeByScore(queueKey, 0, System.currentTimeMillis(), 0, 1);
             if (values.isEmpty()) {
                 try {
